@@ -56,13 +56,13 @@ def main():
     st.set_page_config(page_title="Visualisation des Données", page_icon="")
     
     # Définir l'image de fond
-    background_url = "https://raw.githubusercontent.com/cezangue/simulated_models_equations/main/image_BDD.jpg"
+    background_url = "https://github.com/cezangue/simulated_models_equations/blob/main/image_BDD.JPG"
     set_background(background_url, opacity=0.3, color="#000000")
 
     # Affichage des titres
-    st.markdown("""<h1 class="animated-title">Base de données RDC</h1>""", unsafe_allow_html=True)
-    st.markdown("""<h1 class="animated-title">Période étude : 1999 - 2023</h1>""", unsafe_allow_html=True)
-    st.markdown('<h2 class="fade-in-out">Soit une série de 24 ans.</h2>', unsafe_allow_html=True)
+    st.markdown("""<h1 class="animated-title">Base de données RCA</h1>""", unsafe_allow_html=True)
+    st.markdown("""<h1 class="animated-title">Période étude : 1991 - 2022</h1>""", unsafe_allow_html=True)
+    st.markdown('<h2 class="fade-in-out">Soit une série de 33 ans.</h2>', unsafe_allow_html=True)
     st.title("Les données présentées sur cette page résultent d'un téléchargement des données de la Banque Mondiale.")
 
     # Chargement du fichier Excel
