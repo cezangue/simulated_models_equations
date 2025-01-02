@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 from statsmodels.tsa.stattools import adfuller, kpss
 
 def test_adf(series):
@@ -12,20 +12,27 @@ def test_kpss(series):
     return p_value
 
 def plot_time_series(df, selected_columns, start_year, end_year):
-    plt.figure(figsize=(12, 6))
-    
+    fig = go.Figure()
+
     # Filtrer les données en fonction de la période sélectionnée
     filtered_df = df[(df.iloc[:, 0] >= start_year) & (df.iloc[:, 0] <= end_year)]
-    
+
     for column in selected_columns:
-        plt.plot(filtered_df.iloc[:, 0], filtered_df[column], marker='o', label=column)
-        
-    plt.title("Évolution des Variables Choisies", fontsize=16)
-    plt.xlabel("Année")
-    plt.ylabel("Valeur")
-    plt.grid()
-    plt.legend()
-    st.pyplot(plt)
+        fig.add_trace(go.Scatter(
+            x=filtered_df.iloc[:, 0],
+            y=filtered_df[column],
+            mode='lines+markers',
+            name=column
+        ))
+
+    fig.update_layout(
+        title="Évolution des Variables Choisies",
+        xaxis_title="Année",
+        yaxis_title="Valeur",
+        template='plotly_white'
+    )
+
+    st.plotly_chart(fig)
 
 def main():
     st.set_page_config(page_title="Visualisation des Données")
@@ -60,27 +67,4 @@ def main():
 
             # Differenciation et tests si non stationnaire
             if adf_p_value >= 0.05 or kpss_p_value < 0.05:
-                st.write(f"**La série {column} est non stationnaire. Différenciation...**")
-                differentiated_series = df[column].diff().dropna()  # Différencier la série
-
-                # Tests sur la série différenciée
-                adf_diff_p_value = test_adf(differentiated_series)
-                kpss_diff_p_value = test_kpss(differentiated_series)
-
-                st.write(f"p-value ADF (différenciée) : {adf_diff_p_value} - {'Stationnaire' if adf_diff_p_value < 0.05 else 'Non stationnaire'}")
-                st.write(f"p-value KPSS (différenciée) : {kpss_diff_p_value} - {'Non stationnaire' if kpss_diff_p_value < 0.05 else 'Stationnaire'}")
-
-                results[column]['Differentiated'] = {
-                    'ADF': adf_diff_p_value,
-                    'KPSS': kpss_diff_p_value,
-                }
-
-        # Visualisation des séries sélectionnées
-        if st.button("Visualiser les Séries"):
-            plot_time_series(df, selected_columns, start_year, end_year)
-
-    else:
-        st.warning("Veuillez sélectionner au moins une variable à tester.")
-
-if __name__ == '__main__':
-    main()
+                st.write(f"**La série {column}
