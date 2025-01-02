@@ -60,30 +60,38 @@ def main():
 
     df = pd.read_excel("https://raw.githubusercontent.com/cezangue/simulated_models_equations/main/base_mes_taf.xlsx")
 
+    # Affichage des colonnes pour le débogage
+    st.write("Colonnes disponibles :", df.columns.tolist())
+
     st.subheader("Sélectionnez les Séries Chronologiques à Tester")
     selected_columns = st.multiselect("Choisissez les variables :", df.columns[1:])
 
     if selected_columns:
-        start_year = st.selectbox("Année de début :", df['Annee'].unique())
-        end_year = st.selectbox("Année de fin :", df['Annee'].unique(), index=len(df['Annee'].unique()) - 1)
+        # Vérification du nom de la colonne pour les années
+        if 'Annee' in df.columns:
+            start_year = st.selectbox("Année de début :", df['Annee'].unique())
+            end_year = st.selectbox("Année de fin :", df['Annee'].unique(), index=len(df['Annee'].unique()) - 1)
 
-        results = {}
-        for column in selected_columns:
-            st.write(f"**Tests pour la série : {column}**")
-            adf_p_value = test_adf(df[column])
-            kpss_p_value = test_kpss(df[column])
+            results = {}
+            for column in selected_columns:
+                st.write(f"**Tests pour la série : {column}**")
+                adf_p_value = test_adf(df[column])
+                kpss_p_value = test_kpss(df[column])
 
-            st.write(f"p-value ADF : {adf_p_value} - {'Stationnaire' if adf_p_value < 0.05 else 'Non stationnaire'}")
-            st.write(f"p-value KPSS : {kpss_p_value} - {'Non stationnaire' if kpss_p_value < 0.05 else 'Stationnaire'}")
+                st.write(f"p-value ADF : {adf_p_value} - {'Stationnaire' if adf_p_value < 0.05 else 'Non stationnaire'}")
+                st.write(f"p-value KPSS : {kpss_p_value} - {'Non stationnaire' if kpss_p_value < 0.05 else 'Stationnaire'}")
 
-            results[column] = {
-                'ADF': adf_p_value,
-                'KPSS': kpss_p_value,
-            }
+                results[column] = {
+                    'ADF': adf_p_value,
+                    'KPSS': kpss_p_value,
+                }
 
-        # Visualisation des séries sélectionnées
-        if st.button("Visualiser les Séries"):
-            plot_time_series(df, selected_columns, start_year, end_year)
+            # Visualisation des séries sélectionnées
+            if st.button("Visualiser les Séries"):
+                plot_time_series(df, selected_columns, start_year, end_year)
+
+        else:
+            st.error("La colonne 'Annee' n'existe pas dans le DataFrame. Vérifiez les noms des colonnes.")
 
     else:
         st.warning("Veuillez sélectionner au moins une variable à tester.")
