@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller, kpss
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.stattools import kpss
+from statsmodels.tsa.stattools import PhillipsPerron
 
 def set_background(image_url, opacity=0.3, color="#000000"):
     st.markdown(
@@ -38,6 +41,10 @@ def test_kpss(series):
     statistic, p_value, lags, critical_values = kpss(series, regression='c')
     return p_value
 
+def test_phillips_perron(series):
+    statistic, p_value, _, _ = PhillipsPerron(series)
+    return p_value
+
 def plot_time_series(df, selected_columns):
     plt.figure(figsize=(12, 6))
     for column in selected_columns:
@@ -54,37 +61,35 @@ def main():
     background_url = "https://raw.githubusercontent.com/Ndobo1997/Projet-MES/main/image_analyse_donnees.jpg"
     set_background(background_url, opacity=0.3)
 
-    try:
-        df = pd.read_excel("https://raw.githubusercontent.com/cezangue/simulated_models_equations/main/base_mes_taf.xlsx")
-        
-        # Afficher les colonnes disponibles pour le débogage
-        st.write("Colonnes disponibles :", df.columns.tolist())
+    df = pd.read_excel("https://raw.githubusercontent.com/cezangue/simulated_models_equations/main/base_mes_taf.xlsx")
 
-        st.subheader("Tests de Séries Temporelles")
-        column = st.selectbox("Variable à tester :", df.columns[1:])
-        start_year = st.selectbox("Année de début :", df['Annee'].unique())
-        end_year = st.selectbox("Année de fin :", df['Annee'].unique(), index=len(df['Annee'].unique()) - 1)
-        filtered_df = df[(df['Annee'] >= start_year) & (df['Annee'] <= end_year)]
+    st.subheader("Sélectionnez les Séries Chronologiques à Tester")
+    selected_columns = st.multiselect("Choisissez les variables :", df.columns[1:])
 
-        if st.checkbox("Test ADF"):
-            p_value_adf = test_adf(filtered_df[column])
-            st.write(f"p-value ADF : {p_value_adf}")
-            st.success("Stationnaire" if p_value_adf < 0.05 else "Non stationnaire")
+    if selected_columns:
+        results = {}
+        for column in selected_columns:
+            st.write(f"**Tests pour la série : {column}**")
+            adf_p_value = test_adf(df[column])
+            kpss_p_value = test_kpss(df[column])
+            pp_p_value = test_phillips_perron(df[column])
 
-        if st.checkbox("Test KPSS"):
-            p_value_kpss = test_kpss(filtered_df[column])
-            st.write(f"p-value KPSS : {p_value_kpss}")
-            st.success("Non stationnaire" if p_value_kpss < 0.05 else "Stationnaire")
+            st.write(f"p-value ADF : {adf_p_value} - {'Stationnaire' if adf_p_value < 0.05 else 'Non stationnaire'}")
+            st.write(f"p-value KPSS : {kpss_p_value} - {'Non stationnaire' if kpss_p_value < 0.05 else 'Stationnaire'}")
+            st.write(f"p-value Phillips-Perron : {pp_p_value} - {'Stationnaire' if pp_p_value < 0.05 else 'Non stationnaire'}")
 
-        st.subheader("Visualisation des Données")
-        selected_columns_viz = st.multiselect("Sélectionnez les variables à visualiser :", df.columns[1:])
-        if selected_columns_viz:
-            plot_time_series(df, selected_columns_viz)
-        else:
-            st.warning("Veuillez sélectionner au moins une variable à visualiser.")
+            results[column] = {
+                'ADF': adf_p_value,
+                'KPSS': kpss_p_value,
+                'Phillips-Perron': pp_p_value
+            }
 
-    except Exception as e:
-        st.error(f"Erreur : {e}")
+        # Visualisation des séries sélectionnées
+        if st.button("Visualiser les Séries"):
+            plot_time_series(df, selected_columns)
+
+    else:
+        st.warning("Veuillez sélectionner au moins une variable à tester.")
 
 if __name__ == '__main__':
     main()
