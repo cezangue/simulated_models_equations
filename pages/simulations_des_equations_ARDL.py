@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import statsmodels.api as sm
 
-# Génération de données fictives pour l'exemple
+# Génération de données fictives
 np.random.seed(0)
 n = 100
 data = pd.DataFrame({
@@ -16,7 +16,8 @@ data = pd.DataFrame({
     'Taux_interet': np.random.rand(n),
     'Infflation': np.random.rand(n),
     'Chom': np.random.rand(n),
-    'Pibmond': np.random.rand(n)
+    'Pibmond': np.random.rand(n),
+    'TC': np.random.rand(n)  # Ajout de la colonne TC
 })
 
 # Spécification des équations
@@ -30,14 +31,12 @@ def model_equations(data):
     X1['X_lag'] = data['X'].shift(1)
     X1['M_lag'] = data['M'].shift(1)
 
-    # Créer un DataFrame avec les valeurs non manquantes
     combined_data = pd.concat([Y1, X1], axis=1).dropna()
     Y1_clean = combined_data['Pib']
     X1_clean = sm.add_constant(combined_data.drop(columns='Pib'))
 
     model1 = sm.OLS(Y1_clean, X1_clean).fit()
 
-    # Répéter le même processus pour les autres équations
     # Équation 2: DCF
     Y2 = data['DCF']
     X2 = data[['Taux_interet', 'Pib']]
@@ -58,13 +57,13 @@ def model_equations(data):
 
     model3 = sm.OLS(Y3_clean, X3_clean).fit()
 
-    # Équation 4: MM
-    Y4 = data['MM']
+    # Équation 4: Chom
+    Y4 = data['Chom']
     X4 = data[['Pib', 'Taux_interet', 'Infflation']]
-    X4['MM_lag'] = data['MM'].shift(1)
+    X4['Chom_lag'] = data['Chom'].shift(1)
     combined_data = pd.concat([Y4, X4], axis=1).dropna()
-    Y4_clean = combined_data['MM']
-    X4_clean = sm.add_constant(combined_data.drop(columns='MM'))
+    Y4_clean = combined_data['Chom']
+    X4_clean = sm.add_constant(combined_data.drop(columns='Chom'))
 
     model4 = sm.OLS(Y4_clean, X4_clean).fit()
 
@@ -78,17 +77,7 @@ def model_equations(data):
 
     model5 = sm.OLS(Y5_clean, X5_clean).fit()
 
-    # Équation 6: Chom
-    Y6 = data['Chom']
-    X6 = data[['Pibmond']]
-    X6['Chom_lag'] = data['Chom'].shift(1)
-    combined_data = pd.concat([Y6, X6], axis=1).dropna()
-    Y6_clean = combined_data['Chom']
-    X6_clean = sm.add_constant(combined_data.drop(columns='Chom'))
-
-    model6 = sm.OLS(Y6_clean, X6_clean).fit()
-
-    return model1, model2, model3, model4, model5, model6
+    return model1, model2, model3, model4, model5
 
 # Streamlit Interface
 st.title("Modèle à Équations Simultanées")
@@ -108,22 +97,17 @@ st.markdown("""
 
 3. **FBCF**: 
    \[
-   FBCF_t = a_3 FBCF_{t-1} + b_3 Taux\_interet_t + c_3 PIB_{t-1} + d_3 Taux\_interet_{t-1} + e_3 Taux\_interet_t
+   FBCF_t = a_3 FBCF_{t-1} + b_3 Taux\_interet_t + c_3 PIB_{t-1} + d_3 Taux\_interet_{t-1}
    \]
 
-4. **MM**: 
+4. **Chom**: 
    \[
-   MM_t = a_0^4 + a_4 MM_{t-1} + b_4 PIB_t + c_4 PIB_{t-1} + d_4 Taux\_interet_t + e_4 Taux\_interet_{t-1} + f_4 Infflation_{t-1}
+   Chom_t = a_4 Chom_{t-1} + b_4 PIB_{t-1} + c_4 Pibmond_{t-1}
    \]
 
 5. **TC**: 
    \[
-   TC_t = a_0^5 + a_5 PIB_t + b_5 PIB_{t-1} + c_5 Pibmond_t + d_5 TC_{t-1}
-   \]
-
-6. **Chom**: 
-   \[
-   Chom_t = a_6 Chom_{t-1} + b_6 PIB_{t-1} + c_6 Pibmond_{t-1}
+   TC_t = a_5 PIB_t + b_5 Pibmond_t + c_5 TC_{t-1}
    \]
 """)
 
