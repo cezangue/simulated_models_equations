@@ -31,7 +31,16 @@ def set_background(opacity=0.5, color="#000000"):
         @keyframes fade {{
             0% {{ opacity: 0.2; color: #ADD8E6;}}
             50% {{ opacity: 1; color: #87CEEB; }}
-            100% {{ opacity: 0.2; color: #ADD8E8; }}
+            100% {{ opacity: 0.2; color: #ADD8E6; }}
+        }}
+        .photo-frame {{
+            border: 5px solid #FFD700; /* Couleur dorée */
+            border-radius: 10px;
+            padding: 5px;
+            margin: 10px;
+            width: 100px; /* Largeur du cadre */
+            height: auto; /* Hauteur automatique pour garder le ratio */
+            display: inline-block; /* Pour que le cadre se comporte comme un bloc */
         }}
         </style>
         """,
@@ -44,11 +53,16 @@ def main():
     # Définir la couleur de fond
     set_background(opacity=1.0, color="#000000")
 
-    st.markdown("""<h1 class="animated-title">BIENVENUE DANS L'ESPACE D'ANALYSE DES DYNAMIQUES MACROECONMIQUES DE L'ECONOMIE DE LA RCA</h1>""", unsafe_allow_html=True)
+    # Ajouter le cadre photo en haut à gauche
+    st.markdown('<div style="float: left; margin-right: 10px;">', unsafe_allow_html=True)
+    st.image("rinel_image.JPG", caption="Rinel Image", use_container_width=True)  # Utilisation de use_container_width
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown("""<h1 class="animated-title">BIENVENUE DANS L\'ESPACE D\'ANALYSE DES DYNAMIQUES MACROECONMIQUES DE L\'ECONOMIE DE LA RCA</h1>""", unsafe_allow_html=True)
     st.markdown('<h2 class="fade-in-out">Bonne navigation</h2>', unsafe_allow_html=True)
 
     # Ajouter l'image du drapeau depuis le répertoire local
-    st.image("RCA_image.JPG", caption="Drapeau de la République Centrafricaine", use_container_width=True)  # Changement ici
+    st.image("RCA_image.JPG", caption="Drapeau de la République Centrafricaine", use_container_width=True)
 
     st.title("Cette page, fruit du groupe constitué de TAGNE TCHINDA RINEL et de NAH SAMBOULI LIONEL, vous donne une vue sur la base de données utilisée pour faire des analyses, la description des différentes chroniques retenues, la modélisation ARDL et les simulations.")
     st.title("Pour voir le contenu d'une section, il vous suffit de cliquer sur le nom correspondant pour y accéder. Et pour faire des simulations, vous allez vous-même entrer vos propres données selon le guide que vous trouverez sur la page en question.")
