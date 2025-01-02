@@ -31,7 +31,15 @@ def set_background(opacity=0.5, color="#000000"):
         @keyframes fade {{
             0% {{ opacity: 0.2; color: #ADD8E6;}}
             50% {{ opacity: 1; color: #87CEEB; }}
-            100% {{ opacity: 0.2; color: #ADD8E8; }}
+            100% {{ opacity: 0.2; color: #ADD8E6; }}
+        }}
+        .photo-frame {{
+            border: 5px solid #FFD700; /* Couleur dorée */
+            border-radius: 10px;
+            padding: 5px;
+            margin: 10px;
+            width: 100px; /* Largeur du cadre */
+            height: auto; /* Hauteur automatique pour garder le ratio */
         }}
         </style>
         """,
@@ -44,7 +52,12 @@ def main():
     # Définir la couleur de fond
     set_background(opacity=1.0, color="#000000")
 
-    st.markdown("""<h1 class="animated-title">BIENVENUE DANS L'ESPACE D'ANALYSE DES DYNAMIQUES MACROECONMIQUES DE L'ECONOMIE DE LA RCA</h1>""", unsafe_allow_html=True)
+    # Ajouter le cadre photo en haut à gauche
+    st.markdown('<div style="float: left; margin-right: 10px;">'
+                f'<img src="rine_image.JPG" class="photo-frame" alt="Rine Image">'
+                '</div>', unsafe_allow_html=True)
+
+    st.markdown("""<h1 class="animated-title">BIENVENUE DANS L\'ESPACE D\'ANALYSE DES DYNAMIQUES MACROECONMIQUES DE L\'ECONOMIE DE LA RCA</h1>""", unsafe_allow_html=True)
     st.markdown('<h2 class="fade-in-out">Bonne navigation</h2>', unsafe_allow_html=True)
 
     # Ajouter l'image du drapeau depuis le répertoire local
