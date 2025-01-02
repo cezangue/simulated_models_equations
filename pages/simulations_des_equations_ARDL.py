@@ -23,7 +23,7 @@ data = pd.DataFrame({
 # Spécification des équations
 def model_equations(data):
     models = []
-    
+
     # Équation 1: PIB
     Y1 = data['Pib']
     X1 = data[['FBCF', 'G', 'X', 'M']]
@@ -78,15 +78,15 @@ def model_equations(data):
 # Fonction de prévision
 def forecast(model, last_values, n_years=5):
     forecasts = []
-    
-    # Prévisions pour n_years
+
     for _ in range(n_years):
+        # Assurez-vous que last_values a la bonne forme
+        last_values = sm.add_constant(last_values)  # Ajout de la constante
         forecast_value = model.predict(last_values)
         forecasts.append(forecast_value.iloc[-1])  # Prendre la dernière prévision
         
         # Mise à jour des valeurs pour la prochaine prévision
         last_values = last_values.copy()
-        # Mettre à jour uniquement les colonnes pertinentes pour la prochaine prévision
         last_values.iloc[-1, 1:] = forecast_value.iloc[-1]  # Mettre à jour les valeurs prévues
         last_values = last_values.shift(1)  # Décalage pour la prochaine prévision
         last_values.iloc[-1, 0] = 1  # Remettre la constante à 1
@@ -141,9 +141,6 @@ if st.button("Prévoir"):
     
     # Récupération des dernières valeurs
     last_values = data.iloc[-1:].copy()
-    
-    # Ajout de la constante
-    last_values = sm.add_constant(last_values)
 
     # Prévisions
     forecasts = forecast(model, last_values)
