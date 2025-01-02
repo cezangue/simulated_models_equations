@@ -1,26 +1,13 @@
 import streamlit as st
 
-def set_background(image_url, opacity=0.5, color="#000000"):
-    """Définit l'image de fond de l'application."""
+def set_background(opacity=0.5, color="#000000"):
+    """Définit la couleur de fond de l'application."""
     st.markdown(
         f"""
         <style>
         .stApp {{
-            background-image: url({image_url});
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }}
-        .stApp::before {{
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             background-color: {color};
             opacity: {opacity};
-            z-index: -1;
         }}
         .stApp h1, .stApp h2 {{
             color: white !important;
@@ -34,7 +21,7 @@ def set_background(image_url, opacity=0.5, color="#000000"):
         @keyframes text-animation {{
             0% {{ transform: translateX(-100%); opacity: 0; }}
             10% {{ transform: translateX(0%); opacity: 1;}}
-            90% {{transform: translateX(0%); opacity: 1;}}
+            90% {{ transform: translateX(0%); opacity: 1;}}
             100% {{ transform: translateX(100%); opacity: 0; }}
         }}
         .fade-in-out {{
@@ -54,14 +41,12 @@ def set_background(image_url, opacity=0.5, color="#000000"):
 def main():
     st.set_page_config(page_title="Visualisation des Données", page_icon="")
     
-    # Définir l'image de fond
-    background_url = "https://raw.githubusercontent.com/Ndobo1997/Projet-MES/main/image_congo.jpg"
-    set_background(background_url, opacity=0.3, color="#000000")
+    # Définir la couleur de fond
+    set_background(opacity=1.0, color="#000000")
 
-
-    st.markdown("""<h1 class="animated-title">BIENVENUE DANS CET ESPACE D'ANALYSE DE LA SITUATION MACROÉCONOMIQUE DE LA RDC</h1>""", unsafe_allow_html=True)
+    st.markdown("""<h1 class="animated-title">BIENVENUE DANS L'ESPACE D'ANALYSE DES DYNAMIQUES MACROECONMIQUES DE L'ECONOMIE DE LA RCA</h1>""", unsafe_allow_html=True)
     st.markdown('<h2 class="fade-in-out">Bonne navigation</h2>', unsafe_allow_html=True)
-    st.title("Cette page, fruit du groupe constitué de PIERRE et NATHAN, vous donne une vue sur la base de données utilisée pour faire des analyses, la description des différentes chroniques retenues, la modélisation ARDL et les simulations.")
+    st.title("Cette page, fruit du groupe constitué de TAGNE TCHINDA RINEL et de NAH SAMBOULI LIONEL, vous donne une vue sur la base de données utilisée pour faire des analyses, la description des différentes chroniques retenues, la modélisation ARDL et les simulations.")
     st.title("Pour voir le contenu d'une section, il vous suffit de cliquer sur le nom correspondant pour y accéder. Et pour faire des simulations, vous allez vous-même entrer vos propres données selon le guide que vous trouverez sur la page en question.")
 
 if __name__ == '__main__':
