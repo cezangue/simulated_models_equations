@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from statsmodels.tsa.stattools import adfuller, kpss
+from statsmodels.tsa.stattools import adfuller, kpss, PhillipsPerron
 
 def test_adf(series):
     result = adfuller(series)
@@ -10,6 +10,10 @@ def test_adf(series):
 def test_kpss(series):
     statistic, p_value, lags, critical_values = kpss(series, regression='c')
     return p_value
+
+def test_phillips_perron(series):
+    result = PhillipsPerron(series)
+    return result[1]
 
 def plot_time_series(df, selected_columns, start_year, end_year):
     plt.figure(figsize=(12, 6))
@@ -45,16 +49,41 @@ def main():
         results = {}
         for column in selected_columns:
             st.write(f"**Tests pour la série : {column}**")
+            
+            # Tests sur la série originale
             adf_p_value = test_adf(df[column])
             kpss_p_value = test_kpss(df[column])
+            pp_p_value = test_phillips_perron(df[column])
 
             st.write(f"p-value ADF : {adf_p_value} - {'Stationnaire' if adf_p_value < 0.05 else 'Non stationnaire'}")
             st.write(f"p-value KPSS : {kpss_p_value} - {'Non stationnaire' if kpss_p_value < 0.05 else 'Stationnaire'}")
+            st.write(f"p-value Phillips-Perron : {pp_p_value} - {'Stationnaire' if pp_p_value < 0.05 else 'Non stationnaire'}")
 
             results[column] = {
                 'ADF': adf_p_value,
                 'KPSS': kpss_p_value,
+                'Phillips-Perron': pp_p_value,
             }
+
+            # Differenciation et tests si non stationnaire
+            if adf_p_value >= 0.05 or kpss_p_value < 0.05 or pp_p_value >= 0.05:
+                st.write(f"**La série {column} est non stationnaire. Différenciation...**")
+                differentiated_series = df[column].diff().dropna()  # Différencier la série
+
+                # Tests sur la série différenciée
+                adf_diff_p_value = test_adf(differentiated_series)
+                kpss_diff_p_value = test_kpss(differentiated_series)
+                pp_diff_p_value = test_phillips_perron(differentiated_series)
+
+                st.write(f"p-value ADF (différenciée) : {adf_diff_p_value} - {'Stationnaire' if adf_diff_p_value < 0.05 else 'Non stationnaire'}")
+                st.write(f"p-value KPSS (différenciée) : {kpss_diff_p_value} - {'Non stationnaire' if kpss_diff_p_value < 0.05 else 'Stationnaire'}")
+                st.write(f"p-value Phillips-Perron (différenciée) : {pp_diff_p_value} - {'Stationnaire' if pp_diff_p_value < 0.05 else 'Non stationnaire'}")
+
+                results[column]['Differentiated'] = {
+                    'ADF': adf_diff_p_value,
+                    'KPSS': kpss_diff_p_value,
+                    'Phillips-Perron': pp_diff_p_value,
+                }
 
         # Visualisation des séries sélectionnées
         if st.button("Visualiser les Séries"):
