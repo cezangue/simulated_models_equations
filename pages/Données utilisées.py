@@ -56,7 +56,7 @@ def main():
     st.set_page_config(page_title="Visualisation des Données", page_icon="")
     
     # Définir l'image de fond
-    background_url = "https://github.com/cezangue/simulated_models_equations/blob/main/image_BDD.JPG"
+    background_url = "https://raw.githubusercontent.com/cezangue/simulated_models_equations/main/image_BDD.JPG"
     set_background(background_url, opacity=0.3, color="#000000")
 
     # Affichage des titres
