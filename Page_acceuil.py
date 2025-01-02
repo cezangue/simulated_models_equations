@@ -54,9 +54,9 @@ def main():
     set_background(opacity=1.0, color="#000000")
 
     # Ajouter le cadre photo en haut à gauche
-    st.markdown('<div style="float: left; margin-right: 10px;">'
-                f'<img src="rinel_image.JPG" class="photo-frame" alt="Rinel Image" style="width: 100px; height: auto;">'
-                '</div>', unsafe_allow_html=True)
+    st.markdown('<div style="float: left; margin-right: 10px;">', unsafe_allow_html=True)
+    st.image("rinel_image.JPG", caption="Rinel Image", use_column_width=True)  # Utilisation de st.image
+    st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("""<h1 class="animated-title">BIENVENUE DANS L\'ESPACE D\'ANALYSE DES DYNAMIQUES MACROECONMIQUES DE L\'ECONOMIE DE LA RCA</h1>""", unsafe_allow_html=True)
     st.markdown('<h2 class="fade-in-out">Bonne navigation</h2>', unsafe_allow_html=True)
