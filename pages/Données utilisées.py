@@ -66,7 +66,7 @@ def main():
     st.title("Les données présentées sur cette page résultent d'un téléchargement des données de la Banque Mondiale.")
 
     # Chargement du fichier Excel
-    file_path = "https://github.com/cezangue/simulated_models_equations/blob/main/base_mes_taf.xlsx"
+    file_path = "https://raw.githubusercontent.com/cezangue/simulated_models_equations/main/base_mes_taf.xlsx"
     
     try:
         df = pd.read_excel(file_path, engine='openpyxl')
