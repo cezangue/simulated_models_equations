@@ -48,7 +48,7 @@ def main():
     st.markdown('<h2 class="fade-in-out">Bonne navigation</h2>', unsafe_allow_html=True)
 
     # Ajouter l'image du drapeau depuis le répertoire local
-    st.image("RCA_image.JPG", caption="Drapeau de la République Centrafricaine", use_column_width=True)
+    st.image("RCA_image.JPG", caption="Drapeau de la République Centrafricaine", use_container_width=True)  # Changement ici
 
     st.title("Cette page, fruit du groupe constitué de TAGNE TCHINDA RINEL et de NAH SAMBOULI LIONEL, vous donne une vue sur la base de données utilisée pour faire des analyses, la description des différentes chroniques retenues, la modélisation ARDL et les simulations.")
     st.title("Pour voir le contenu d'une section, il vous suffit de cliquer sur le nom correspondant pour y accéder. Et pour faire des simulations, vous allez vous-même entrer vos propres données selon le guide que vous trouverez sur la page en question.")
