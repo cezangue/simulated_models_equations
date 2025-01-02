@@ -40,6 +40,7 @@ def set_background(opacity=0.5, color="#000000"):
             margin: 10px;
             width: 100px; /* Largeur du cadre */
             height: auto; /* Hauteur automatique pour garder le ratio */
+            display: inline-block; /* Pour que le cadre se comporte comme un bloc */
         }}
         </style>
         """,
@@ -54,7 +55,7 @@ def main():
 
     # Ajouter le cadre photo en haut à gauche
     st.markdown('<div style="float: left; margin-right: 10px;">'
-                f'<img src="rine_image.JPG" class="photo-frame" alt="Rine Image">'
+                f'<img src="rinel_image.JPG" class="photo-frame" alt="Rinel Image" style="width: 100px; height: auto;">'
                 '</div>', unsafe_allow_html=True)
 
     st.markdown("""<h1 class="animated-title">BIENVENUE DANS L\'ESPACE D\'ANALYSE DES DYNAMIQUES MACROECONMIQUES DE L\'ECONOMIE DE LA RCA</h1>""", unsafe_allow_html=True)
