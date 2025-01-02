@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller, kpss
 
@@ -38,10 +37,15 @@ def test_kpss(series):
     statistic, p_value, lags, critical_values = kpss(series, regression='c')
     return p_value
 
-def plot_time_series(df, selected_columns):
+def plot_time_series(df, selected_columns, start_year, end_year):
     plt.figure(figsize=(12, 6))
+    
+    # Filtrer les données en fonction de la période sélectionnée
+    filtered_df = df[(df['Annee'] >= start_year) & (df['Annee'] <= end_year)]
+    
     for column in selected_columns:
-        plt.plot(df['Annee'], df[column], marker='o', label=column)
+        plt.plot(filtered_df['Annee'], filtered_df[column], marker='o', label=column)
+        
     plt.title("Évolution des Variables Choisies", fontsize=16)
     plt.xlabel("Année")
     plt.ylabel("Valeur")
@@ -60,6 +64,9 @@ def main():
     selected_columns = st.multiselect("Choisissez les variables :", df.columns[1:])
 
     if selected_columns:
+        start_year = st.selectbox("Année de début :", df['Annee'].unique())
+        end_year = st.selectbox("Année de fin :", df['Annee'].unique(), index=len(df['Annee'].unique()) - 1)
+
         results = {}
         for column in selected_columns:
             st.write(f"**Tests pour la série : {column}**")
@@ -76,7 +83,7 @@ def main():
 
         # Visualisation des séries sélectionnées
         if st.button("Visualiser les Séries"):
-            plot_time_series(df, selected_columns)
+            plot_time_series(df, selected_columns, start_year, end_year)
 
     else:
         st.warning("Veuillez sélectionner au moins une variable à tester.")
