@@ -24,7 +24,7 @@ def set_background(image_url, opacity=0.5, color="#000000"):
             z-index: -1;
         }}
         .stApp h1, .stApp h2, .stApp p {{
-            color: black !important; /* Changer la couleur à noir */
+            color: green !important; /* Changer la couleur à vert */
         }}
         .animated-title {{
             font-size: 2.5em;
@@ -40,12 +40,12 @@ def set_background(image_url, opacity=0.5, color="#000000"):
         }}
         .fade-in-out {{
             animation: fade 3s ease-in-out infinite alternate;
-            color: #555555; /* Couleur de texte pour l'animation */
+            color: #006400; /* Couleur de texte pour l'animation */
         }}
         @keyframes fade {{
-            0% {{ opacity: 0.2; color: #555555;}}
-            50% {{ opacity: 1; color: #000000; }}
-            100% {{ opacity: 0.2; color: #555555; }}
+            0% {{ opacity: 0.2; color: #006400;}}
+            50% {{ opacity: 1; color: green; }}
+            100% {{ opacity: 0.2; color: #006400; }}
         }}
         </style>
         """,
