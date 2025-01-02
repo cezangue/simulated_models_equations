@@ -23,14 +23,14 @@ def set_background(image_url, opacity=0.5, color="#000000"):
             opacity: {opacity};
             z-index: -1;
         }}
-        .stApp h1, .stApp h2 {{
-            color: white !important;
+        .stApp h1, .stApp h2, .stApp p {{
+            color: black !important; /* Changer la couleur à noir */
         }}
         .animated-title {{
             font-size: 2.5em;
             font-weight: bold;
             animation: text-animation 10s linear infinite;
-            text-shadow: 2px 2px 4px #000000;
+            text-shadow: 2px 2px 4px #FFFFFF; /* Ombre pour le texte */
         }}
         @keyframes text-animation {{
             0% {{ transform: translateX(-100%); opacity: 0; }}
@@ -40,12 +40,12 @@ def set_background(image_url, opacity=0.5, color="#000000"):
         }}
         .fade-in-out {{
             animation: fade 3s ease-in-out infinite alternate;
-            color: #ADD8E6;
+            color: #555555; /* Couleur de texte pour l'animation */
         }}
         @keyframes fade {{
-            0% {{ opacity: 0.2; color: #ADD8E6;}}
-            50% {{ opacity: 1; color: #87CEEB; }}
-            100% {{ opacity: 0.2; color: #ADD8E6; }}
+            0% {{ opacity: 0.2; color: #555555;}}
+            50% {{ opacity: 1; color: #000000; }}
+            100% {{ opacity: 0.2; color: #555555; }}
         }}
         </style>
         """,
