@@ -3,9 +3,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller, kpss
-from statsmodels.tsa.stattools import adfuller
-from statsmodels.tsa.stattools import kpss
-from statsmodels.tsa.stattools import PhillipsPerron
 
 def set_background(image_url, opacity=0.3, color="#000000"):
     st.markdown(
@@ -41,10 +38,6 @@ def test_kpss(series):
     statistic, p_value, lags, critical_values = kpss(series, regression='c')
     return p_value
 
-def test_phillips_perron(series):
-    statistic, p_value, _, _ = PhillipsPerron(series)
-    return p_value
-
 def plot_time_series(df, selected_columns):
     plt.figure(figsize=(12, 6))
     for column in selected_columns:
@@ -72,16 +65,13 @@ def main():
             st.write(f"**Tests pour la série : {column}**")
             adf_p_value = test_adf(df[column])
             kpss_p_value = test_kpss(df[column])
-            pp_p_value = test_phillips_perron(df[column])
 
             st.write(f"p-value ADF : {adf_p_value} - {'Stationnaire' if adf_p_value < 0.05 else 'Non stationnaire'}")
             st.write(f"p-value KPSS : {kpss_p_value} - {'Non stationnaire' if kpss_p_value < 0.05 else 'Stationnaire'}")
-            st.write(f"p-value Phillips-Perron : {pp_p_value} - {'Stationnaire' if pp_p_value < 0.05 else 'Non stationnaire'}")
 
             results[column] = {
                 'ADF': adf_p_value,
                 'KPSS': kpss_p_value,
-                'Phillips-Perron': pp_p_value
             }
 
         # Visualisation des séries sélectionnées
