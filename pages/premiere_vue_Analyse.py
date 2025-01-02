@@ -67,4 +67,27 @@ def main():
 
             # Differenciation et tests si non stationnaire
             if adf_p_value >= 0.05 or kpss_p_value < 0.05:
-                st.write(f"**La série {column}
+                st.write(f"**La série {column} est non stationnaire. Différenciation...**")
+                differentiated_series = df[column].diff().dropna()  # Différencier la série
+
+                # Tests sur la série différenciée
+                adf_diff_p_value = test_adf(differentiated_series)
+                kpss_diff_p_value = test_kpss(differentiated_series)
+
+                st.write(f"p-value ADF (différenciée) : {adf_diff_p_value} - {'Stationnaire' if adf_diff_p_value < 0.05 else 'Non stationnaire'}")
+                st.write(f"p-value KPSS (différenciée) : {kpss_diff_p_value} - {'Non stationnaire' if kpss_diff_p_value < 0.05 else 'Stationnaire'}")
+
+                results[column]['Differentiated'] = {
+                    'ADF': adf_diff_p_value,
+                    'KPSS': kpss_diff_p_value,
+                }
+
+        # Visualisation des séries sélectionnées
+        if st.button("Visualiser les Séries"):
+            plot_time_series(df, selected_columns, start_year, end_year)
+
+    else:
+        st.warning("Veuillez sélectionner au moins une variable à tester.")
+
+if __name__ == '__main__':
+    main()
