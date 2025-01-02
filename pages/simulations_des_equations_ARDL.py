@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
-from statsmodels.iolib.summary2 import summary_df
 
 # Génération de données fictives pour l'exemple
 np.random.seed(0)
@@ -98,4 +97,4 @@ models = model_equations(data)
 st.subheader("Résultats des Estimations par Double Moindres Carrés")
 for i, model in enumerate(models, start=1):
     st.markdown(f"### Modèle {i}")
-    st.write(summary_df(model))
+    st.write(model.summary())  # Utiliser summary() au lieu de summary_df()
