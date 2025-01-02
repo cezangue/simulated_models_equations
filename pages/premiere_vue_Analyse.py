@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller, kpss
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.stats.diagnostic import breaks_cusumolsresid
-import base64
-import plotly.graph_objects as go
 from statsmodels.tsa.api import VAR
 import networkx as nx
 
@@ -38,20 +36,20 @@ def set_background(image_url, opacity=0.3, color="#000000"):
             font-family: sans-serif !important;
         }}
         .dataframe {{
-            background-color: rgba(255, 255, 255, 0.7) !important; /* Fond blanc semi-transparent */
-            color: green !important; /* Texte vert */
+            background-color: rgba(255, 255, 255, 0.7) !important;
+            color: green !important;
             font-size: 14px !important;
-            border-collapse: collapse !important; /* Fusionne les bordures des cellules */
-            width: 100% !important; /* Occupe toute la largeur disponible */
+            border-collapse: collapse !important;
+            width: 100% !important;
             margin-bottom: 1em !important;
         }}
         .dataframe th, .dataframe td {{
-            border: 1px solid #ddd !important; /* Bordure grise pour les cellules */
-            padding: 8px !important; /* Espacement intérieur des cellules */
-            text-align: left !important; /* Alignement du texte à gauche */
+            border: 1px solid #ddd !important;
+            padding: 8px !important;
+            text-align: left !important;
         }}
         .dataframe th {{
-            background-color: #f2f2f2 !important; /* Fond gris clair pour l'en-tête */
+            background-color: #f2f2f2 !important;
             font-weight: bold !important;
         }}
         .stSuccess {{
@@ -130,7 +128,6 @@ def main():
 
         stationarity_test_adf = st.checkbox("Test ADF")
         stationarity_test_kpss = st.checkbox("Test KPSS")
-        max_lags = st.number_input("Nombre de lags :", min_value=1, max_value=len(filtered_df)//2, value=len(filtered_df)//4)
 
         if stationarity_test_adf:
             p_value_adf = test_adf(filtered_df[column])
