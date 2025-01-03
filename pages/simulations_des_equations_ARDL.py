@@ -27,6 +27,7 @@ if data is not None:
     data.columns = data.columns.str.strip()
 
     # Assignation des colonnes aux variables
+    data['DCF'] = data.iloc[:, 1]      # Deuxième colonne
     data['Pib'] = data.iloc[:, 3]      # Quatrième colonne
     data['G'] = data.iloc[:, 2]        # Troisième colonne
     data['X'] = data.iloc[:, 4]        # Cinquième colonne
