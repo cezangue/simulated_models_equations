@@ -94,15 +94,16 @@ if data is not None:
             var_forecasts = []
             
             for _ in range(forecast_years):
-                last_values = sm.add_constant(last_values[equations[var]])  # Utiliser uniquement les colonnes nécessaires
-                forecast_value = results[var].predict(last_values)
+                last_values_with_const = sm.add_constant(last_values[equations[var]], has_constant='add')  # Ajouter une constante
+                forecast_value = results[var].predict(last_values_with_const)
                 var_forecasts.append(forecast_value.iloc[-1])  # Prendre la dernière prévision
                 
                 # Mise à jour des valeurs pour la prochaine prévision
                 last_values = last_values.shift(1)  # Décalage
                 for exog_var in equations[var]:
                     if exog_var in last_values.columns:
-                        last_values[exog_var].iloc[-1] = forecast_value.iloc[-1]  # Mettre la prévision dans le décalage
+                        # Mettre la prévision dans le décalage
+                        last_values[exog_var].iloc[-1] = forecast_value.iloc[-1]  
                 
                 last_values.iloc[-1, 0] = 1  # Remettre la constante à 1
 
