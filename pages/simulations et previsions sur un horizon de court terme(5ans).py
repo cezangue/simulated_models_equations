@@ -27,18 +27,18 @@ if data is not None:
     data.columns = data.columns.str.strip()
 
     # Assignation des colonnes aux variables
-    data['DCF'] = data.iloc[:, 1]      # Deuxième colonne
-    data['Pib'] = data.iloc[:, 3]      # Quatrième colonne
-    data['G'] = data.iloc[:, 2]        # Troisième colonne
-    data['X'] = data.iloc[:, 4]        # Cinquième colonne
-    data['M'] = data.iloc[:, 5]        # Sixième colonne
-    data['TC'] = data.iloc[:, 6]       # Septième colonne
-    data['FBCF'] = data.iloc[:, 7]     # Huitième colonne
-    data['Chom'] = data.iloc[:, 8]     # Neuvième colonne
-    data['Pibmond'] = data.iloc[:, 9]   # Dixième colonne
-    data['Infflation'] = data.iloc[:, 10]  # Onzième colonne
-    data['MM'] = data.iloc[:, 11]      # Douzième colonne
-    data['Taux_interet'] = data.iloc[:, 12]  # Treizième colonne
+    data['DCF'] = data.iloc[:, 1]
+    data['Pib'] = data.iloc[:, 3]
+    data['G'] = data.iloc[:, 2]
+    data['X'] = data.iloc[:, 4]
+    data['M'] = data.iloc[:, 5]
+    data['TC'] = data.iloc[:, 6]
+    data['FBCF'] = data.iloc[:, 7]
+    data['Chom'] = data.iloc[:, 8]
+    data['Pibmond'] = data.iloc[:, 9]
+    data['Infflation'] = data.iloc[:, 10]
+    data['MM'] = data.iloc[:, 11]
+    data['Taux_interet'] = data.iloc[:, 12]
 
     # Création des variables avec retards
     try:
@@ -88,24 +88,21 @@ if data is not None:
         # Prévisions pour chaque variable dépendante
         forecast_years = 5
         forecasts = {}
-        
+
         for var in equations.keys():
             last_values = data.iloc[-1:].copy()
             var_forecasts = []
-            
+
             for _ in range(forecast_years):
-                last_values_with_const = sm.add_constant(last_values[equations[var]], has_constant='add')  # Ajouter une constante
-                forecast_value = results[var].predict(last_values_with_const)
+                last_values_for_prediction = last_values[equations[var]]  # Ne pas ajouter de constante
+                forecast_value = results[var].predict(last_values_for_prediction)
                 var_forecasts.append(forecast_value.iloc[-1])  # Prendre la dernière prévision
-                
+
                 # Mise à jour des valeurs pour la prochaine prévision
                 last_values = last_values.shift(1)  # Décalage
                 for exog_var in equations[var]:
                     if exog_var in last_values.columns:
-                        # Mettre la prévision dans le décalage
-                        last_values[exog_var].iloc[-1] = forecast_value.iloc[-1]  
-                
-                last_values.iloc[-1, 0] = 1  # Remettre la constante à 1
+                        last_values[exog_var].iloc[-1] = forecast_value.iloc[-1]
 
             forecasts[var] = var_forecasts
 
