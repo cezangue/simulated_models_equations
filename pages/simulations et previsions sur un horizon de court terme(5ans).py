@@ -109,4 +109,7 @@ if data is not None:
                                      mode='lines+markers', name=var))
             fig.update_layout(title=f'Prévisions pour {var} (2024-2028)',
                               xaxis_title='Années',
-                              yaxis_title='Valeurs Prév
+                              yaxis_title='Valeurs Prévues',  # Vérifiez ici
+                              showlegend=True)
+
+            st.plotly_chart(fig)
