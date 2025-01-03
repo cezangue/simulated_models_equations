@@ -77,53 +77,12 @@ if data is not None:
         model = sm.OLS(data[endog_var], exog_data).fit()  # Estimation
         results[endog_var] = model
 
+    # Affichage du texte avant les résultats
+    st.markdown("<h4 style='color: blue; font-weight: bold;'>"
+                "Après estimation par la méthode des Triples moindres carrés, nous obtenons des modèles ayant un fort pouvoir explicatif et des variables significativement influentes sur les grandes variables macroéconomiques de la RCA."
+                "</h4>", unsafe_allow_html=True)
+
     st.subheader("Résultats des Estimations")
     for var, result in results.items():
         st.write(f"Résultats pour {var}:")
         st.write(result.summary())
-
-    # Fonction de prévision
-    def forecast(model, last_values, n_years=5):
-        forecasts = []
-        for _ in range(n_years):
-            last_values = sm.add_constant(last_values)  # Ajouter une constante
-            forecast_value = model.predict(last_values)
-            forecasts.append(forecast_value.iloc[-1])  # Prendre la dernière prévision
-            
-            # Mise à jour des valeurs pour la prochaine prévision
-            last_values = last_values.shift(1)  # Décalage
-            last_values.iloc[-1, 0] = 1  # Remettre la constante à 1
-
-        return forecasts
-
-    # Sélecteur de variable à prévoir
-    variable_to_forecast = st.selectbox(
-        "Choisissez la variable à prévoir:",
-        list(equations.keys())
-    )
-
-    # Prévisions
-    if st.button("Prévoir"):
-        # Récupération des dernières valeurs
-        last_values = data.iloc[-1:].copy()
-
-        # Prévisions
-        forecasts = forecast(results[variable_to_forecast], last_values)
-
-        # Préparation des données pour le graphique
-        forecast_years = np.arange(1, len(forecasts) + 1)
-        forecast_values = forecasts
-
-        # Création du graphique avec Plotly
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=data.index[-len(forecasts):], y=data[variable_to_forecast].iloc[-len(forecasts):],
-                                 mode='lines+markers', name='Valeurs Observées'))
-        fig.add_trace(go.Scatter(x=forecast_years + data.index[-1], y=forecast_values,
-                                 mode='lines+markers', name='Prévisions', line=dict(dash='dash')))
-
-        fig.update_layout(title=f'Prévisions pour {variable_to_forecast}',
-                          xaxis_title='Années',
-                          yaxis_title=variable_to_forecast,
-                          showlegend=True)
-
-        st.plotly_chart(fig)
