@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
+from statsmodels.multivariate import sur
 
 # Charger les données à partir d'un fichier Excel
 @st.cache_data
@@ -28,11 +29,12 @@ if data is not None:
         'TC': ['Pib', 'Pibmond']
     }
 
-    # Estimation avec 3SLS
-    model = sm.system.ThreeStageLeastSquares(
-        endog=[data[equation] for equation in equations.keys()],
-        exog=[sm.add_constant(data[equations[equation]]) for equation in equations.keys()]
-    ).fit()
+    # Préparer les données pour le modèle SUR
+    endog = [data[equation] for equation in equations.keys()]
+    exog = [sm.add_constant(data[equations[equation]]) for equation in equations.keys()]
+
+    # Estimation avec SUR
+    model = sur.SUR(endog, exog).fit()
 
     st.subheader("Résultats des Estimations")
     st.write(model.summary())
