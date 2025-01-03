@@ -87,7 +87,6 @@ if data is not None:
     if st.button("Générer les Prévisions"):
         # Prévisions pour chaque variable dépendante
         forecast_years = 5
-        forecasts = {}
 
         for var in equations.keys():
             last_values = data.iloc[-1:].copy()
@@ -104,17 +103,10 @@ if data is not None:
                     if exog_var in last_values.columns:
                         last_values[exog_var].iloc[-1] = forecast_value.iloc[-1]
 
-            forecasts[var] = var_forecasts
-
-        # Création du graphique avec Plotly
-        fig = go.Figure()
-        for var, forecast_values in forecasts.items():
-            fig.add_trace(go.Scatter(x=np.arange(2024, 2024 + forecast_years), y=forecast_values,
+            # Création du graphique pour cette variable
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=np.arange(2024, 2024 + forecast_years), y=var_forecasts,
                                      mode='lines+markers', name=var))
-
-        fig.update_layout(title='Prévisions des Valeurs Futures pour les Variables Dépendantes (2024-2028)',
-                          xaxis_title='Années',
-                          yaxis_title='Valeurs Prévues',
-                          showlegend=True)
-
-        st.plotly_chart(fig)
+            fig.update_layout(title=f'Prévisions pour {var} (2024-2028)',
+                              xaxis_title='Années',
+                              yaxis_title='Valeurs Prév
