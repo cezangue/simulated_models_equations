@@ -26,8 +26,9 @@ if data is not None:
     # Supprimer les espaces dans les noms des colonnes
     data.columns = data.columns.str.strip()
 
-    # Utiliser la quatrième colonne comme Pib
+    # Utiliser la quatrième colonne comme Pib et la troisième comme G
     data['Pib'] = data.iloc[:, 3]  # Quatrième colonne
+    data['G'] = data.iloc[:, 2]    # Troisième colonne
 
     # Création des variables avec retards
     try:
