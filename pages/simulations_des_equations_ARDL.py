@@ -26,10 +26,18 @@ if data is not None:
     # Supprimer les espaces dans les noms des colonnes
     data.columns = data.columns.str.strip()
 
-    # Utiliser la quatrième colonne comme Pib, la troisième comme G et la cinquième comme X
-    data['Pib'] = data.iloc[:, 3]  # Quatrième colonne
-    data['G'] = data.iloc[:, 2]    # Troisième colonne
-    data['X'] = data.iloc[:, 4]    # Cinquième colonne
+    # Assignation des colonnes aux variables
+    data['Pib'] = data.iloc[:, 3]      # Quatrième colonne
+    data['G'] = data.iloc[:, 2]        # Troisième colonne
+    data['X'] = data.iloc[:, 4]        # Cinquième colonne
+    data['M'] = data.iloc[:, 5]        # Sixième colonne
+    data['TC'] = data.iloc[:, 6]       # Septième colonne
+    data['FBCF'] = data.iloc[:, 7]     # Huitième colonne
+    data['Chom'] = data.iloc[:, 8]     # Neuvième colonne
+    data['Pibmond'] = data.iloc[:, 9]   # Dixième colonne
+    data['Infflation'] = data.iloc[:, 10]  # Onzième colonne
+    data['MM'] = data.iloc[:, 11]      # Douzième colonne
+    data['Taux_interet'] = data.iloc[:, 12]  # Treizième colonne
 
     # Création des variables avec retards
     try:
@@ -38,11 +46,12 @@ if data is not None:
         data['G_lag'] = data['G'].shift(1)
         data['X_lag'] = data['X'].shift(1)
         data['M_lag'] = data['M'].shift(1)
+        data['TC_lag'] = data['TC'].shift(1)
         data['DCF_lag'] = data['DCF'].shift(1)
         data['Taux_interet_lag'] = data['Taux_interet'].shift(1)
         data['Infflation_lag'] = data['Infflation'].shift(1)
         data['Chom_lag'] = data['Chom'].shift(1)
-        data['TC_lag'] = data['TC'].shift(1)
+        data['MM_lag'] = data['MM'].shift(1)
         data['Pibmond_lag'] = data['Pibmond'].shift(1)
     except KeyError as e:
         st.error(f"Erreur : la colonne {e} n'existe pas dans le DataFrame.")
