@@ -88,29 +88,29 @@ if data is not None:
         # Prévisions pour chaque variable dépendante
         forecast_years = 5
 
-       for var in equations.keys():
-    last_values = data.iloc[-1:].copy()
-    var_forecasts = []
+        for var in equations.keys():
+            last_values = data.iloc[-1:].copy()
+            var_forecasts = []
 
-    for _ in range(forecast_years):
-        # Ajouter une constante ici
-        last_values_for_prediction = sm.add_constant(last_values[equations[var]], has_constant='add')
-        forecast_value = results[var].predict(last_values_for_prediction)
-        var_forecasts.append(forecast_value.iloc[-1])  # Prendre la dernière prévision
+            for _ in range(forecast_years):
+                # Ajouter une constante ici
+                last_values_for_prediction = sm.add_constant(last_values[equations[var]], has_constant='add')
+                forecast_value = results[var].predict(last_values_for_prediction)
+                var_forecasts.append(forecast_value.iloc[-1])  # Prendre la dernière prévision
 
-        # Mise à jour des valeurs pour la prochaine prévision
-        last_values = last_values.shift(1)  # Décalage
-        for exog_var in equations[var]:
-            if exog_var in last_values.columns:
-                last_values[exog_var].iloc[-1] = forecast_value.iloc[-1]
+                # Mise à jour des valeurs pour la prochaine prévision
+                last_values = last_values.shift(1)  # Décalage
+                for exog_var in equations[var]:
+                    if exog_var in last_values.columns:
+                        last_values[exog_var].iloc[-1] = forecast_value.iloc[-1]
 
-    # Création du graphique pour cette variable
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=np.arange(2024, 2024 + forecast_years), y=var_forecasts,
-                             mode='lines+markers', name=var))
-    fig.update_layout(title=f'Prévisions pour {var} (2024-2028)',
-                      xaxis_title='Années',
-                      yaxis_title='Valeurs Prévues',
-                      showlegend=True)
+            # Création du graphique pour cette variable
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=np.arange(2024, 2024 + forecast_years), y=var_forecasts,
+                                     mode='lines+markers', name=var))
+            fig.update_layout(title=f'Prévisions pour {var} (2024-2028)',
+                              xaxis_title='Années',
+                              yaxis_title='Valeurs Prévues',
+                              showlegend=True)
 
-    st.plotly_chart(fig)
+            st.plotly_chart(fig)
