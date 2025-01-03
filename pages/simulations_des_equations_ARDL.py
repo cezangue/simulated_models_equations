@@ -20,18 +20,30 @@ def load_data(file_path):
 data = load_data('base_mes_taf.xlsx')
 
 if data is not None:
+    # Vérifier les noms des colonnes
+    st.write("Noms des colonnes dans le DataFrame :", data.columns)
+
+    # Supprimer les espaces dans les noms des colonnes
+    data.columns = data.columns.str.strip()
+
+    # Utiliser la quatrième colonne comme Pib
+    data['Pib'] = data.iloc[:, 3]  # Quatrième colonne
+
     # Création des variables avec retards
-    data['Pib_lag'] = data['Pib'].shift(1)
-    data['FBCF_lag'] = data['FBCF'].shift(1)
-    data['G_lag'] = data['G'].shift(1)
-    data['X_lag'] = data['X'].shift(1)
-    data['M_lag'] = data['M'].shift(1)
-    data['DCF_lag'] = data['DCF'].shift(1)
-    data['Taux_interet_lag'] = data['Taux_interet'].shift(1)
-    data['Infflation_lag'] = data['Infflation'].shift(1)
-    data['Chom_lag'] = data['Chom'].shift(1)
-    data['TC_lag'] = data['TC'].shift(1)
-    data['Pibmond_lag'] = data['Pibmond'].shift(1)
+    try:
+        data['Pib_lag'] = data['Pib'].shift(1)
+        data['FBCF_lag'] = data['FBCF'].shift(1)
+        data['G_lag'] = data['G'].shift(1)
+        data['X_lag'] = data['X'].shift(1)
+        data['M_lag'] = data['M'].shift(1)
+        data['DCF_lag'] = data['DCF'].shift(1)
+        data['Taux_interet_lag'] = data['Taux_interet'].shift(1)
+        data['Infflation_lag'] = data['Infflation'].shift(1)
+        data['Chom_lag'] = data['Chom'].shift(1)
+        data['TC_lag'] = data['TC'].shift(1)
+        data['Pibmond_lag'] = data['Pibmond'].shift(1)
+    except KeyError as e:
+        st.error(f"Erreur : la colonne {e} n'existe pas dans le DataFrame.")
 
     # Supprimer les lignes avec des valeurs manquantes
     data.dropna(inplace=True)
