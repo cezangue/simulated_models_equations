@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
-from statsmodels.multivariate import sur
+from statsmodels.regression import sur  # Correct import for SUR
 
 # Charger les données à partir d'un fichier Excel
 @st.cache_data
