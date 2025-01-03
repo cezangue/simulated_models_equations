@@ -77,9 +77,9 @@ if data is not None:
         model = sm.OLS(data[endog_var], exog_data).fit()  # Estimation
         results[endog_var] = model
 
-    # Affichage du texte avant les résultats
+    # Affichage du texte d'introduction
     st.markdown("<h4 style='color: blue; font-weight: bold;'>"
-                "Après estimation par la méthode des Triples moindres carrés, nous obtenons des modèles ayant un fort pouvoir explicatif et des variables significativement influentes sur les grandes variables macroéconomiques de la RCA."
+                "Nous vous proposons donc ici une simulation du comportement des dynamiques macroéconomiques de la RCA au cours des 5 prochaines années après 2023 (2024 à 2028)."
                 "</h4>", unsafe_allow_html=True)
 
     # Graphique des prévisions pour les 5 prochaines années
@@ -100,6 +100,9 @@ if data is not None:
                 
                 # Mise à jour des valeurs pour la prochaine prévision
                 last_values = last_values.shift(1)  # Décalage
+                for exog_var in equations[var]:
+                    last_values[exog_var] = last_values[exog_var].shift(1)  # Décalage des autres variables
+                
                 last_values.iloc[-1, 0] = 1  # Remettre la constante à 1
 
             forecasts[var] = var_forecasts
@@ -107,10 +110,10 @@ if data is not None:
         # Création du graphique avec Plotly
         fig = go.Figure()
         for var, forecast_values in forecasts.items():
-            fig.add_trace(go.Scatter(x=np.arange(1, forecast_years + 1), y=forecast_values,
+            fig.add_trace(go.Scatter(x=np.arange(2024, 2024 + forecast_years), y=forecast_values,
                                      mode='lines+markers', name=var))
 
-        fig.update_layout(title='Prévisions des Valeurs Futures pour les Variables Dépendantes',
+        fig.update_layout(title='Prévisions des Valeurs Futures pour les Variables Dépendantes (2024-2028)',
                           xaxis_title='Années',
                           yaxis_title='Valeurs Prévues',
                           showlegend=True)
