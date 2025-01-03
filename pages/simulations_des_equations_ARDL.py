@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
-from statsmodels.regression import sur  # Correct import for SUR
+import plotly.graph_objects as go
 
 # Charger les données à partir d'un fichier Excel
 @st.cache_data
@@ -20,41 +20,55 @@ def load_data(file_path):
 data = load_data('base_mes_taf.xlsx')
 
 if data is not None:
+    # Création des variables avec retards
+    data['Pib_lag'] = data['Pib'].shift(1)
+    data['FBCF_lag'] = data['FBCF'].shift(1)
+    data['G_lag'] = data['G'].shift(1)
+    data['X_lag'] = data['X'].shift(1)
+    data['M_lag'] = data['M'].shift(1)
+    data['DCF_lag'] = data['DCF'].shift(1)
+    data['Taux_interet_lag'] = data['Taux_interet'].shift(1)
+    data['Infflation_lag'] = data['Infflation'].shift(1)
+    data['Chom_lag'] = data['Chom'].shift(1)
+    data['TC_lag'] = data['TC'].shift(1)
+    data['Pibmond_lag'] = data['Pibmond'].shift(1)
+
+    # Supprimer les lignes avec des valeurs manquantes
+    data.dropna(inplace=True)
+
     # Spécification des équations
     equations = {
-        'Pib': ['FBCF', 'G', 'X', 'M', 'DCF', 'Taux_interet', 'Infflation', 'Chom', 'Pibmond', 'TC'],
-        'DCF': ['Taux_interet', 'Pib'],
-        'FBCF': ['Taux_interet', 'Pib'],
-        'Chom': ['Pib', 'Taux_interet', 'Infflation'],
-        'TC': ['Pib', 'Pibmond']
+        'Pib': ['Pib_lag', 'FBCF_lag', 'FBCF', 'G', 'G_lag', 'X', 'X_lag', 'M', 'M_lag'],
+        'DCF': ['DCF_lag', 'Pib_lag', 'Taux_interet_lag'],
+        'FBCF': ['FBCF_lag', 'Taux_interet', 'Pib_lag', 'Taux_interet_lag'],
+        'MM': ['MM_lag', 'Pib', 'Pib_lag', 'Taux_interet', 'Taux_interet_lag', 'Infflation_lag'],
+        'TC': ['Pib', 'Pib_lag', 'Pibmond', 'TC_lag'],
+        'Chom': ['Chom_lag', 'Pib_lag', 'Pibmond_lag']
     }
 
-    # Préparer les données pour le modèle SUR
-    endog = [data[equation] for equation in equations.keys()]
-    exog = [sm.add_constant(data[equations[equation]]) for equation in equations.keys()]
-
-    # Estimation avec SUR
-    model = sur.SUR(endog, exog).fit()
+    # Estimation des modèles OLS pour chaque équation
+    results = {}
+    for endog_var, exog_vars in equations.items():
+        exog_data = sm.add_constant(data[exog_vars])  # Ajouter une constante
+        model = sm.OLS(data[endog_var], exog_data).fit()  # Estimation
+        results[endog_var] = model
 
     st.subheader("Résultats des Estimations")
-    st.write(model.summary())
+    for var, result in results.items():
+        st.write(f"Résultats pour {var}:")
+        st.write(result.summary())
 
     # Fonction de prévision
     def forecast(model, last_values, n_years=5):
         forecasts = []
         for _ in range(n_years):
-            last_values = sm.add_constant(last_values)  # Ajout de la constante
+            last_values = sm.add_constant(last_values)  # Ajouter une constante
             forecast_value = model.predict(last_values)
             forecasts.append(forecast_value.iloc[-1])  # Prendre la dernière prévision
             
             # Mise à jour des valeurs pour la prochaine prévision
-            last_values_new = last_values.copy()
-            for col in last_values.columns[1:]:  # Ignorer la constante
-                last_values_new[col].iloc[-1] = forecast_value.iloc[-1]  # Mise à jour de la dernière valeur
-            
-            last_values_new = last_values_new.shift(1)  # Décalage pour la prochaine prévision
-            last_values_new.iloc[-1, 0] = 1  # Remettre la constante à 1
-            last_values = last_values_new  # Mettre à jour last_values
+            last_values = last_values.shift(1)  # Décalage
+            last_values.iloc[-1, 0] = 1  # Remettre la constante à 1
 
         return forecasts
 
@@ -70,9 +84,22 @@ if data is not None:
         last_values = data.iloc[-1:].copy()
 
         # Prévisions
-        forecasts = forecast(model, last_values)
+        forecasts = forecast(results[variable_to_forecast], last_values)
 
-        # Affichage des prévisions
-        st.subheader(f"Prévisions pour {variable_to_forecast} sur 5 ans")
-        for i, forecast_value in enumerate(forecasts, start=1):
-            st.write(f"Année {i}: {forecast_value:.2f}")
+        # Préparation des données pour le graphique
+        forecast_years = np.arange(1, len(forecasts) + 1)
+        forecast_values = forecasts
+
+        # Création du graphique avec Plotly
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=data.index[-len(forecasts):], y=data[variable_to_forecast].iloc[-len(forecasts):],
+                                 mode='lines+markers', name='Valeurs Observées'))
+        fig.add_trace(go.Scatter(x=forecast_years + data.index[-1], y=forecast_values,
+                                 mode='lines+markers', name='Prévisions', line=dict(dash='dash')))
+
+        fig.update_layout(title=f'Prévisions pour {variable_to_forecast}',
+                          xaxis_title='Années',
+                          yaxis_title=variable_to_forecast,
+                          showlegend=True)
+
+        st.plotly_chart(fig)
