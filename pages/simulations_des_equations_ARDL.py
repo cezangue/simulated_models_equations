@@ -3,28 +3,17 @@ import pandas as pd
 import numpy as np
 import statsmodels.api as sm
 
-# Génération de données fictives
-np.random.seed(0)
-n = 100
-data = pd.DataFrame({
-    'Pib': np.random.rand(n),
-    'FBCF': np.random.rand(n),
-    'G': np.random.rand(n),
-    'X': np.random.rand(n),
-    'M': np.random.rand(n),
-    'DCF': np.random.rand(n),
-    'Taux_interet': np.random.rand(n),
-    'Infflation': np.random.rand(n),
-    'Chom': np.random.rand(n),
-    'Pibmond': np.random.rand(n),
-    'TC': np.random.rand(n)  # Ajout de la colonne TC
-})
+# Charger les données à partir d'un fichier Excel
+@st.cache_data
+def load_data(file_path):
+    return pd.read_excel(file_path)
+
+# Charger les données
+data = load_data('base_mes_taf.xlsx')
 
 # Spécification des équations
 def model_equations(data):
     models = []
-
-    # Équations et estimation des modèles
     equations = [
         ('Pib', ['FBCF', 'G', 'X', 'M']),
         ('DCF', ['Taux_interet', 'Pib']),
@@ -35,9 +24,12 @@ def model_equations(data):
 
     for Y_var, X_vars in equations:
         Y = data[Y_var]
-        X = data[X_vars]
+        X = data[X_vars].copy()
+
+        # Création des variables retardées
         for var in X_vars:
             X[f'{var}_lag'] = data[var].shift(1)
+
         combined_data = pd.concat([Y, X], axis=1).dropna()
         Y_clean = combined_data[Y_var]
         X_clean = sm.add_constant(combined_data.drop(columns=Y_var))
@@ -48,18 +40,20 @@ def model_equations(data):
 # Fonction de prévision
 def forecast(model, last_values, n_years=5):
     forecasts = []
-    
+
     for _ in range(n_years):
         last_values = sm.add_constant(last_values)  # Ajout de la constante
         forecast_value = model.predict(last_values)
         forecasts.append(forecast_value.iloc[-1])  # Prendre la dernière prévision
         
         # Mise à jour des valeurs pour la prochaine prévision
-        last_values = last_values.copy()
+        last_values_new = last_values.copy()
         for col in last_values.columns[1:]:  # Ignorer la constante
-            last_values[col].iloc[-1] = forecast_value.iloc[-1]
-        last_values = last_values.shift(1)  # Décalage pour la prochaine prévision
-        last_values.iloc[-1, 0] = 1  # Remettre la constante à 1
+            last_values_new[col].iloc[-1] = forecast_value.iloc[-1]  # Mise à jour de la dernière valeur
+        
+        last_values_new = last_values_new.shift(1)  # Décalage pour la prochaine prévision
+        last_values_new.iloc[-1, 0] = 1  # Remettre la constante à 1
+        last_values = last_values_new  # Mettre à jour last_values
 
     return forecasts
 
