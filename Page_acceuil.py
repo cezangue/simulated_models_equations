@@ -1,57 +1,66 @@
 import streamlit as st
+import os
+from pathlib import Path
 
-def set_background(opacity=0.5, color="#000000"):
-    """Définit la couleur de fond de l'application."""
+# Définir le titre de l'application
+st.title("Page d'Accueil")
+
+# Fonction pour créer des onglets
+def display_tabs():
+    tabs = ["Volet de visualisation des indicateurs", "Autre page 1", "Autre page 2"]  # Ajoutez ici d'autres onglets si nécessaire
+    selected_tab = st.selectbox("Choisissez une option :", tabs)
+
+    if selected_tab == "Volet de visualisation des indicateurs":
+        display_visualisation()
+    elif selected_tab == "Autre page 1":
+        st.write("Contenu de l'autre page 1")
+    elif selected_tab == "Autre page 2":
+        st.write("Contenu de l'autre page 2")
+
+# Fonction pour afficher le contenu de la visualisation
+def display_visualisation():
     st.markdown(
-        f"""
+        """
         <style>
-        .stApp {{
-            background-color: {color};
-            opacity: {opacity};
-        }}
-        .stApp h1, .stApp h2 {{
-            color: white !important;
-        }}
-        .animated-title {{
+        body {
+            background-color: #FFA500; /* Couleur de fond orange */
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
             font-size: 2.5em;
             font-weight: bold;
             animation: text-animation 10s linear infinite;
             text-shadow: 2px 2px 4px #000000;
-        }}
-        @keyframes text-animation {{
-            0% {{ transform: translateX(-100%); opacity: 0; }}
-            10% {{ transform: translateX(0%); opacity: 1;}}
-            90% {{ transform: translateX(0%); opacity: 1;}}
-            100% {{ transform: translateX(100%); opacity: 0; }}
-        }}
-        .fade-in-out {{
+        }
+        @keyframes text-animation {
+            0% { transform: translateX(-100%); opacity: 0; }
+            10% { transform: translateX(0%); opacity: 1; }
+            90% { transform: translateX(0%); opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+        h2 {
             animation: fade 3s ease-in-out infinite alternate;
             color: #ADD8E6;
-        }}
-        @keyframes fade {{
-            0% {{ opacity: 0.2; color: #ADD8E6;}}
-            50% {{ opacity: 1; color: #87CEEB; }}
-            100% {{ opacity: 0.2; color: #ADD8E8; }}
-        }}
+        }
+        @keyframes fade {
+            0% { opacity: 0.2; color: #ADD8E6; }
+            50% { opacity: 1; color: #87CEEB; }
+            100% { opacity: 0.2; color: #ADD8E8; }
+        }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-def main():
-    st.set_page_config(page_title="Visualisation des Données", page_icon="")
-    
-    # Définir la couleur de fond
-    set_background(opacity=1.0, color="#000000")
-
-    st.markdown("""<h1 class="animated-title">BIENVENUE DANS L'ESPACE D'ANALYSE DES DYNAMIQUES MACROECONMIQUES DE L'ECONOMIE DE LA RCA</h1>""", unsafe_allow_html=True)
-    st.markdown('<h2 class="fade-in-out">Bonne navigation</h2>', unsafe_allow_html=True)
+    st.markdown("""<h1>TAGNE TCHINDA VOUS SOUHAITE LA BIENVENUE DANS L'ESPACE D'ANALYSE DES EFFETS DU CHANGEMENT CLIMATIQUE EN AFRIQUE SUB-SAHARIENNE</h1>""", unsafe_allow_html=True)
+    st.markdown('<h2>Bonne navigation</h2>', unsafe_allow_html=True)
 
     # Ajouter l'image du drapeau depuis le répertoire local
-    st.image("RCA_image.JPG", caption="Drapeau de la République Centrafricaine", use_container_width=True)  # Changement ici
+    st.image("Changement_climatique.JPG", caption="  ", use_container_width=True)
 
-    st.title("Cette page, fruit du groupe constitué de TAGNE TCHINDA RINEL et de NAH SAMBOULI LIONEL, vous donne une vue sur la base de données utilisée pour faire des analyses, la description des différentes chroniques retenues, la modélisation ARDL et les simulations.")
-    st.title("Pour voir le contenu d'une section, il vous suffit de cliquer sur le nom correspondant pour y accéder. Et pour faire des simulations, vous allez vous-même entrer vos propres données selon le guide que vous trouverez sur la page en question.")
+    st.write("Cette page, fruit du travail de TAGNE TCHINDA RINEL, nous vous proposons une vue sur la base de données utilisée pour faire des analyses, la description des différentes chroniques retenues, et l'analyse de la stationnarité des chroniques.")
+    st.write("Pour voir le contenu d'une section, il vous suffit de cliquer sur le nom correspondant pour y accéder.")
 
-if __name__ == '__main__':
-    main()
+# Appel de la fonction pour afficher les onglets
+display_tabs()
